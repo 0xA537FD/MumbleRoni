@@ -33,6 +33,7 @@ class Song:
         self._id = 0
         self._title = None
         self._url = None
+        self._audio_url = None
         self._is_playing = False
 
     @property
@@ -58,6 +59,14 @@ class Song:
     @url.setter
     def url(self, value):
         self._url = value
+
+    @property
+    def audio_url(self):
+        return self._audio_url
+
+    @audio_url.setter
+    def audio_url(self, value):
+        self._audio_url = value
 
     @property
     def is_playing(self):

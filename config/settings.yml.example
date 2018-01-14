@@ -1,0 +1,7 @@
+server:
+  host: "" # The ip address of your mumble server
+  port: 64738 # The port on which you mumble server runs
+  username: "" # The username of the bot
+  password: "" # The password of the server
+  default_channel: 1 # The channel to which the bot should connect when it's started.
+                     # This can be the name of the channel or it's id.

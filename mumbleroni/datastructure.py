@@ -2,6 +2,9 @@
 
 
 class IDictParseable:
+    """
+    Describes a datastructure that is parseable into and from a dict.
+    """
     @classmethod
     def parse_from_dict(cls, d):
         raise NotImplementedError

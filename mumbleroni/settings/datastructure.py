@@ -7,6 +7,7 @@ from mumbleroni.datastructure import IDictParseable
 
 class Settings(IDictParseable):
     DEFAULT_COMMAND_PREFIX = "!"
+    KEY_COMMAND_PREFIX = "command_prefix"
 
     def __init__(self):
         self._server = Server()
@@ -16,14 +17,15 @@ class Settings(IDictParseable):
     def parse_from_dict(cls, d):
         result = Settings()
         result.server = Server.parse_from_dict(d)
+        result.command_prefix = d.get(cls.KEY_COMMAND_PREFIX, cls.DEFAULT_COMMAND_PREFIX)
 
         return result
 
     def parse_to_dict(self):
-        result = {}
-        result[self._server.KEY_SERVER] = self._server.parse_to_dict()
-
-        return result
+        return {
+            self._server.KEY_SERVER: self._server.parse_to_dict(),
+            self.KEY_COMMAND_PREFIX: self._command_prefix,
+        }
 
     @property
     def server(self):
@@ -54,6 +56,7 @@ class Server(IDictParseable):
     KEY_KEYFILE = "keyfile"
     KEY_RECONNECT = "reconnect"
     KEY_TOKENS = "tokens"
+    KEY_DEFAULT_CHANNEL = "default_channel"
 
     def __init__(self):
         self._host = None
@@ -64,6 +67,7 @@ class Server(IDictParseable):
         self._keyfile = None
         self._reconnect = True
         self._tokens = []
+        self._default_channel = None
 
     @classmethod
     def parse_from_dict(cls, d):
@@ -74,11 +78,12 @@ class Server(IDictParseable):
         result.host = d[cls.KEY_SERVER].get(cls.KEY_HOST)
         result.port = d[cls.KEY_SERVER].get(cls.KEY_PORT, cls.DEFAULT_MUMBLE_PORT)
         result.username = d[cls.KEY_SERVER].get(cls.KEY_USERNAME)
-        result.password = d[cls.KEY_SERVER].get(cls.KEY_PASSWORD)
+        result.password = d[cls.KEY_SERVER].get(cls.KEY_PASSWORD, "")
         result.certificate_path = d[cls.KEY_SERVER].get(cls.KEY_CERTIFICATE_PATH)
         result.keyfile = d[cls.KEY_SERVER].get(cls.KEY_KEYFILE)
         result.reconnect = d[cls.KEY_SERVER].get(cls.KEY_RECONNECT, False)
         result.tokens = d[cls.KEY_SERVER].get(cls.KEY_TOKENS, [])
+        result.default_channel = d[cls.KEY_SERVER].get(cls.KEY_DEFAULT_CHANNEL)
         cls.validate(result)
 
         return result
@@ -93,6 +98,7 @@ class Server(IDictParseable):
             self.KEY_KEYFILE: self._keyfile,
             self.KEY_RECONNECT: self._reconnect,
             self.KEY_TOKENS: self.KEY_TOKENS,
+            self.KEY_DEFAULT_CHANNEL: self._default_channel,
         }
 
     @classmethod
@@ -100,10 +106,12 @@ class Server(IDictParseable):
         cls._validate_host(server)
         cls._validate_port(server)
         cls._validate_username(server)
+        cls._validate_password(server)
         cls._validate_certificate_path(server)
-        # cls._validate_keyfile(server)
+        cls._validate_keyfile(server)
         cls._validate_reconnect(server)
         cls._validate_tokens(server)
+        cls._validate_default_channel(server)
 
     @classmethod
     def _validate_host(cls, server):
@@ -134,9 +142,17 @@ class Server(IDictParseable):
             raise ValueError("The {} is empty.".format(cls.KEY_USERNAME))
 
     @classmethod
+    def _validate_password(cls, server):
+        if server.password is None:
+            return
+        if type(server.password) != str:
+            raise ValueError("The {} has an invalid type... Expected type str "
+                             "got {}".format(cls.KEY_PASSWORD, type(server.password)))
+
+    @classmethod
     def _validate_certificate_path(cls, server):
         if server.certificate_path is None:
-            raise ValueError("Missing {}.".format(cls.KEY_CERTIFICATE_PATH))
+            return
         if type(server.certificate_path) != str:
             raise ValueError("The {} has an invalid type... Expected type str "
                              "got {}".format(cls.KEY_CERTIFICATE_PATH, type(server.certificate_path)))
@@ -175,6 +191,14 @@ class Server(IDictParseable):
                 if type(token) != str:
                     raise ValueError("An entry in {} had the wrong type... Expected type str "
                                      "got {}".format(cls.KEY_TOKENS, type(token)))
+
+    @classmethod
+    def _validate_default_channel(cls, server):
+        if server.default_channel is None:
+            return
+        if type(server.default_channel) != str and type(server.default_channel) != int:
+            raise ValueError("The {} has an invalid type... Expected type str or int "
+                             "got {}".format(cls.KEY_DEFAULT_CHANNEL, type(server.default_channel)))
 
     @property
     def host(self):
@@ -239,3 +263,11 @@ class Server(IDictParseable):
     @tokens.setter
     def tokens(self, value):
         self._tokens = value
+
+    @property
+    def default_channel(self):
+        return self._default_channel
+
+    @default_channel.setter
+    def default_channel(self, value):
+        self._default_channel = value

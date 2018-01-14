@@ -5,7 +5,7 @@ import yaml
 
 from mumbleroni.logging import Logger
 from mumbleroni.settings.datastructure import Settings, Server
-from mumbleroni.settings.util import CONFIG_FOLDER_NAME, CONFIG_FILE_NAME
+from mumbleroni.settings.constants import CONFIG_FOLDER_NAME, CONFIG_FILE_NAME
 
 
 class SettingsParser:
@@ -21,5 +21,6 @@ class SettingsParser:
         with open(os.path.join(os.path.join(os.path.abspath(os.path.curdir), CONFIG_FOLDER_NAME), CONFIG_FILE_NAME), "r") as f:
             settings_yaml = yaml.load(f)
             cls._logger.debug("Settings object raw: {}".format(settings_yaml))
+            cls._logger.info("Finished parsing settings.")
 
             return Settings.parse_from_dict(settings_yaml)
