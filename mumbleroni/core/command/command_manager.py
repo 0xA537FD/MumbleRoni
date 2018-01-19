@@ -1,14 +1,15 @@
 # -*- coding: utf-8 -*-
 
+import logging
+
 from mumbleroni.core.command.error import RegistrationError
 from mumbleroni.settings.settingsparser import SettingsParser
-from mumbleroni.logging import Logger
+
+_logger = logging.getLogger(__name__)
 
 
 class CommandManager:
     COMMAND_SCAFFOLD = "{prefix}{command}"
-
-    _logger = Logger(__name__).get
     _commands = {}
 
     def __init__(self):
@@ -31,13 +32,13 @@ class CommandManager:
         :param message: The message.
         """
         if not message.startswith(self._settings.command_prefix):
-            self._logger.info("The passed message does not start with a command.")
+            _logger.info("The passed message does not start with a command.")
             return
-        self._logger.info("Recognised command {}".format(message.split(" ")[0]))
+        _logger.info("Recognised command {}".format(message.split(" ")[0]))
 
         for command in self._commands.keys():
             command_with_prefix = self.COMMAND_SCAFFOLD.format(prefix=self._settings.command_prefix,
                                                                command=command)
             if message.startswith(command_with_prefix):
-                self._logger.info("Found function for command {}".format(command_with_prefix))
+                _logger.info("Found function for command {}".format(command_with_prefix))
                 self._commands[command].__call__(message)

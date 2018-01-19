@@ -3,39 +3,45 @@
 import time
 import pafy
 import audioop
+import logging
 import threading as th
 import subprocess as sp
 
 from mumbleroni.core.module import AbstractModule
-from mumbleroni.logging import Logger
 from bs4 import BeautifulSoup
 
 
 class YoutubeMusicPlayerModule(AbstractModule):
-    _logger = Logger(__name__).get
-
     def __init__(self, mumble):
-        super(YoutubeMusicPlayerModule, self).__init__(mumble)
+        AbstractModule.__init__(self, mumble)
         self._ffmpeg_thread = None
         self._music_thread = None
         self._stop_music = False
+        self.p = self.play
         self._register_command("play", self.play)
         self._register_command("stop", self.stop)
 
     def play(self, message):
         self._stop_music = False
-        music_link = None
+        music_url = None
 
         try:
             soup = BeautifulSoup(message, "html.parser")
-            music_link = soup.find("a").get("href")
+            music_url= soup.find("a").get("href")
         except Exception:
-            self._logger.error("An error occured while trying to parse the link out of the message.", exc_info=True)
-            self._send_message_to_channel("No or an invalid link was passed with the command.")
+            _logger.error("An error occured while trying to parse the link out of the message.", exc_info=True)
+            self._send_message_to_channel("An invalid link was passed with the command.")
+            return
 
-        video = pafy.new(music_link)
-        audio_url = video.getbestaudio().url
-        self._send_message_to_channel("Now playing >>> {}".format(video.title))
+        try:
+            video = pafy.new(music_url)
+            audio_url = video.getbestaudio().url
+            self._send_message_to_channel("Now playing >> {}".format(video.title))
+        except Exception:
+            self._send_message_to_channel("An error occurred while trying to get the audio.")
+            _logger.error("An error occurred while trying to get the audio of the video url {}".format(music_url),
+                               exc_info=True)
+            return
 
         command = ["ffmpeg", "-nostdin", "-i", audio_url, "-ac", "1", "-f", "s16le", "-ar", "48000", "-"]
         self._ffmpeg_thread = sp.Popen(command, stdout=sp.PIPE, bufsize=480)
@@ -58,3 +64,6 @@ class YoutubeMusicPlayerModule(AbstractModule):
                 self._mumble.sound_output.add_sound(audioop.mul(out, 2, 0.1))
             else:
                 time.sleep(0.01)
+
+
+_logger = logging.getLogger(__name__)
