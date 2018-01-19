@@ -8,7 +8,7 @@ import logging.config
 from optparse import OptionParser
 from mumbleroni.core.constants import VERSION_FILE_NAME
 from mumbleroni.core.mumbleroni import MumbleRoni
-from mumbleroni.constants import LOGGING_CONFIG_PATH
+from mumbleroni.constants import LOGGING_CONFIG_PATH, LOG_DIR_NAME
 
 
 def main():
@@ -38,6 +38,9 @@ def get_program_version():
 
 
 def setup_logging():
+    if not os.path.exists(LOG_DIR_NAME):
+        os.mkdir(LOG_DIR_NAME)
+
     if os.path.exists(LOGGING_CONFIG_PATH):
         with open(LOGGING_CONFIG_PATH, "r") as f:
             config = yaml.load(f)
