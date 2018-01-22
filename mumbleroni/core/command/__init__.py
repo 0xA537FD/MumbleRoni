@@ -1,3 +1,3 @@
 # -*- coding: utf-8 -*-
 
-from . import command_manager, error
+from . import constants, error, manager, registry

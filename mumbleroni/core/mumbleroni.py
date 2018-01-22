@@ -7,8 +7,8 @@ import pymumble.pymumble_py3 as mmbl
 import pymumble.pymumble_py3.callbacks as mmbl_callbacks
 
 from mumbleroni.settings.settingsparser import SettingsParser
-from mumbleroni.core.command.command_manager import CommandManager
-from mumbleroni.core.module import ModuleLoader
+from mumbleroni.core.command.manager import CommandManager
+from mumbleroni.core.module.loader import ModuleLoader
 
 _logger = logging.getLogger(__name__)
 
@@ -17,7 +17,6 @@ class MumbleRoni(th.Thread):
     def __init__(self):
         th.Thread.__init__(self)
         self._settings = SettingsParser.parse()
-        self._command_manager = CommandManager()
         self._main_thread = None
         _logger.debug(
             "Credentials which will be used to connect to the server: {}".format(self._settings.server.parse_to_dict()))
@@ -30,7 +29,8 @@ class MumbleRoni(th.Thread):
                                    reconnect=self._settings.server.reconnect,
                                    tokens=self._settings.server.tokens,
                                    debug=False)
-        self._module_loader = ModuleLoader(self._mumble)
+        self._command_manager = CommandManager()
+        self._module_loader = ModuleLoader(self._mumble, self._command_manager)
         self._init_callbacks()
         self._mumble.set_codec_profile("audio")
 
@@ -68,4 +68,4 @@ class MumbleRoni(th.Thread):
     def _text_message_received(self, text):
         message = text.message
         _logger.info("Message: {}".format(message))
-        self._command_manager.check_message_and_execute(message)
+        self._command_manager.check_and_execute_message(message)

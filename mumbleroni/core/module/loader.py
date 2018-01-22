@@ -1,25 +1,15 @@
 # -*- coding: utf-8 -*-
 
 import logging
-
-from mumbleroni.core.command.command_manager import CommandManager
+from mumbleroni.core.module.abstract_module import AbstractModule
 
 _logger = logging.getLogger(__name__)
 
 
-class AbstractModule:
-    _register_command = CommandManager.register_command
-
-    def __init__(self, mumble):
-        self._mumble = mumble
-
-    def _send_message_to_channel(self, message):
-        self._mumble.channels[self._mumble.users.myself["channel_id"]].send_text_message(message)
-
-
 class ModuleLoader:
-    def __init__(self, mumble):
+    def __init__(self, mumble, command_manager):
         self._mumble = mumble
+        self._command_manager = command_manager
         self._modules = []
         self._init_modules()
 
@@ -28,10 +18,13 @@ class ModuleLoader:
 
         for module in modules:
             try:
+                _logger.info("Loading module named: {}".format(module.__name__))
                 self._modules.append(module(self._mumble))
+                self._command_manager.command_registry.register_queued_commands()
+                _logger.info("Successfully loaded the module.")
             except Exception:
                 _logger.error("An error occured while trying to load a module.", exc_info=True)
-                _logger.info(self._modules)
+                self._command_manager.command_registry.unregister_queued_commands()
 
     @property
     def modules(self):

@@ -7,8 +7,10 @@ import logging
 import threading as th
 import subprocess as sp
 
-from mumbleroni.core.module import AbstractModule
+from mumbleroni.core.module.abstract_module import AbstractModule
 from bs4 import BeautifulSoup
+
+_logger = logging.getLogger(__name__)
 
 
 class YoutubeMusicPlayerModule(AbstractModule):
@@ -17,7 +19,6 @@ class YoutubeMusicPlayerModule(AbstractModule):
         self._ffmpeg_thread = None
         self._music_thread = None
         self._stop_music = False
-        self.p = self.play
         self._register_command("play", self.play)
         self._register_command("stop", self.stop)
 
@@ -27,7 +28,7 @@ class YoutubeMusicPlayerModule(AbstractModule):
 
         try:
             soup = BeautifulSoup(message, "html.parser")
-            music_url= soup.find("a").get("href")
+            music_url = soup.find("a").get("href")
         except Exception:
             _logger.error("An error occured while trying to parse the link out of the message.", exc_info=True)
             self._send_message_to_channel("An invalid link was passed with the command.")
@@ -40,7 +41,7 @@ class YoutubeMusicPlayerModule(AbstractModule):
         except Exception:
             self._send_message_to_channel("An error occurred while trying to get the audio.")
             _logger.error("An error occurred while trying to get the audio of the video url {}".format(music_url),
-                               exc_info=True)
+                          exc_info=True)
             return
 
         command = ["ffmpeg", "-nostdin", "-i", audio_url, "-ac", "1", "-f", "s16le", "-ar", "48000", "-"]
@@ -64,6 +65,3 @@ class YoutubeMusicPlayerModule(AbstractModule):
                 self._mumble.sound_output.add_sound(audioop.mul(out, 2, 0.1))
             else:
                 time.sleep(0.01)
-
-
-_logger = logging.getLogger(__name__)
