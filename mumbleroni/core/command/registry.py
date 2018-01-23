@@ -21,24 +21,31 @@ class CommandRegistry:
         :param command: The name of the command.
         :param function: The function it will trigger.
         """
+        _logger.debug("Adding command to queue.")
+
         if command in cls._command_queue.keys():
             raise RegistrationError("A command with the name {} already exists.".format(command))
 
         cls._command_queue[command] = function
+        _logger.info("Successfully added the command: \"{}\" to the queue.".format(command))
 
     def register_queued_commands(self):
         """
         Registers all commands from the command queue.
         """
+        _logger.debug("Registering queued commands.")
+
         for command_name in self._command_queue.keys():
             self._commands[command_name] = self._command_queue[command_name]
 
         self._command_queue.clear()
+        _logger.info("Successfully registered queued commands.")
 
     def unregister_queued_commands(self):
         """
         Deletes all commands from the command queue.
         """
+        _logger.debug("Unregistering queued commands.")
         self._command_queue.clear()
 
     @property
