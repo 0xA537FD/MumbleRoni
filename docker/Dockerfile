@@ -5,21 +5,23 @@ RUN apt-get update \
        gcc \
        git \
        python-dev \
-       python-pip
+       python3-pip
 
 RUN mkdir /etc/mumbleroni
 WORKDIR /etc/mumbleroni
 
 RUN git config --global http.sslVerify false \
-    && git clone --recurse-submodules https://github.com/Peter-Morawski/MumbleRoni.git
+    && git clone --recurse-submodules https://github.com/Peter-Morawski/MumbleRoni.git .
 
-RUN add-apt-repository ppa:kirillshkrogalev/ffmpeg-next \
-    && apt-get update \
-    && apt-get install ffmpeg \
-    && apt-get install opus-tools
+RUN apt-get install -y --no-install-recommends \
+       libav-tools \
+       opus-tools
 
-RUN pip install setuptools \
-    && pip install wheel \
-    && pip install -r requirements.txt
+RUN pip3 install setuptools \
+    && pip3 install wheel \
+    && pip3 install -r requirements.txt \
+    && pip3 install -r pymumble/requirements.txt
 
-CMD ["python", "run.py"]
+VOLUME ["/etc/mumbleroni/config", "/etc/mumbleroni/mumbleroni/modules"]
+
+CMD ["python3", "run.py"]
