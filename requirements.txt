@@ -1,4 +1,5 @@
 pyyaml
 pafy
+youtube-dl
 bs4
 beautifulsoup4
