@@ -19,7 +19,7 @@ class MumbleRoni(th.Thread):
         self._settings = SettingsParser.parse()
         self._main_thread = None
         _logger.debug(
-            "Credentials which will be used to connect to the server: {}".format(self._settings.server.parse_to_dict()))
+            "Credentials which will be used to connect to the server: {}".format(self._settings.server.to_dict()))
         self._mumble = mmbl.Mumble(host=self._settings.server.host,
                                    user=self._settings.server.username,
                                    port=self._settings.server.port,
@@ -45,7 +45,7 @@ class MumbleRoni(th.Thread):
         self._connect_to_default_channel()
         _logger.info("Connected to the server.")
 
-        self._main_thread = th.Thread(target=self._start_main_thread)
+        self._main_thread = th.Thread(target=self._main_loop)
         self._main_thread.start()
         self._main_thread.join()
 
@@ -61,7 +61,7 @@ class MumbleRoni(th.Thread):
             _logger.info("The following channel name was passed: {}".format(self._settings.server.default_channel))
             self._mumble.channels.find_by_name(self._settings.server.default_channel).move_in()
 
-    def _start_main_thread(self):
+    def _main_loop(self):
         while True:
             time.sleep(1)
 

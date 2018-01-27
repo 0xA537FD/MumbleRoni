@@ -30,4 +30,4 @@ class SettingsParser:
             _logger.debug("Settings object raw: {}".format(settings_yaml))
             _logger.info("Finished parsing settings.")
 
-            return Settings.parse_from_dict(settings_yaml)
+            return Settings.from_dict(settings_yaml)

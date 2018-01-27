@@ -15,7 +15,7 @@ class CommandRegistry:
         self._settings = SettingsParser.parse()
 
     @classmethod
-    def add_command_to_queue(cls, command, function):
+    def add_to_queue(cls, command, function):
         """
         Registers a command to the command queue.
         :param command: The name of the command.
@@ -41,7 +41,7 @@ class CommandRegistry:
         self._command_queue.clear()
         _logger.info("Successfully registered queued commands.")
 
-    def unregister_queued_commands(self):
+    def clear_queue(self):
         """
         Deletes all commands from the command queue.
         """

@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 
-import unittest as ut
+import unittest
 
 
 def main():
-    ut.main()
+    unittest.main()
 
 
 if __name__ == '__main__':

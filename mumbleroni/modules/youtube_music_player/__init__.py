@@ -50,14 +50,6 @@ class YoutubeMusicPlayerModule(AbstractModule):
         self._music_thread.start()
         self._music_thread.join()
 
-    def stop(self, message):
-        self._stop_music = True
-        self._mumble.sound_output.clear_buffer()
-
-        if self._ffmpeg_thread:
-            self._ffmpeg_thread.kill()
-            self._ffmpeg_thread = None
-
     def _play_music(self):
         while not self._stop_music and self._mumble.is_alive():
             out = self._ffmpeg_thread.stdout.read(480)
@@ -65,3 +57,11 @@ class YoutubeMusicPlayerModule(AbstractModule):
                 self._mumble.sound_output.add_sound(audioop.mul(out, 2, 0.1))
             else:
                 time.sleep(0.01)
+
+    def stop(self, message):
+        self._stop_music = True
+        self._mumble.sound_output.clear_buffer()
+
+        if self._ffmpeg_thread:
+            self._ffmpeg_thread.kill()
+            self._ffmpeg_thread = None

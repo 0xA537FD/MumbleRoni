@@ -24,7 +24,7 @@ class ModuleLoader:
                 _logger.info("Successfully loaded the module.")
             except Exception:
                 _logger.error("An error occured while trying to load a module.", exc_info=True)
-                self._command_manager.command_registry.unregister_queued_commands()
+                self._command_manager.command_registry.clear_queue()
 
     @property
     def modules(self):

@@ -14,16 +14,16 @@ class Settings(IDictParseable):
         self._command_prefix = self.DEFAULT_COMMAND_PREFIX
 
     @classmethod
-    def parse_from_dict(cls, d):
+    def from_dict(cls, d):
         result = Settings()
-        result.server = Server.parse_from_dict(d)
+        result.server = Server.from_dict(d)
         result.command_prefix = d.get(cls.KEY_COMMAND_PREFIX, cls.DEFAULT_COMMAND_PREFIX)
 
         return result
 
-    def parse_to_dict(self):
+    def to_dict(self):
         return {
-            self._server.KEY_SERVER: self._server.parse_to_dict(),
+            self._server.KEY_SERVER: self._server.to_dict(),
             self.KEY_COMMAND_PREFIX: self._command_prefix,
         }
 
@@ -70,7 +70,7 @@ class Server(IDictParseable):
         self._default_channel = None
 
     @classmethod
-    def parse_from_dict(cls, d):
+    def from_dict(cls, d):
         """
         Parses a dictionary into a Server object and validates it.
         """
@@ -88,7 +88,7 @@ class Server(IDictParseable):
 
         return result
 
-    def parse_to_dict(self):
+    def to_dict(self):
         return {
             self.KEY_HOST: self._host,
             self.KEY_PORT: self._port,
