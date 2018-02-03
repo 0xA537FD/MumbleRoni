@@ -38,15 +38,33 @@ class Manifest(IDictParseable):
 
     @classmethod
     def _validate_name(cls, manifest):
-        pass
+        if manifest.name is None:
+            raise ValueError("Missing {}".format(cls.KEY_NAME))
+        if type(manifest.name) != str:
+            raise ValueError("The {} has an invalid type... Expected type str "
+                             "got {}".format(cls.KEY_NAME, type(manifest.name)))
+        if manifest.name is "":
+            raise ValueError("The {} is empty.".format(cls.KEY_NAME))
 
     @classmethod
     def _validate_version(cls, manifest):
-        pass
+        if manifest.version is None:
+            raise ValueError("Missing {}".format(cls.KEY_VERSION))
+        if type(manifest.version) != str:
+            raise ValueError("The {} has an invalid type... Expected type str "
+                             "got {}".format(cls.KEY_VERSION, type(manifest.version)))
+        if manifest.version is "":
+            raise ValueError("The {} is empty.".format(cls.KEY_VERSION))
 
     @classmethod
     def _validate_summary(cls, manifest):
-        pass
+        if manifest.summary is None:
+            return
+        if type(manifest.summary) != str:
+            raise ValueError("The {} has an invalid type... Expected type str "
+                             "got {}".format(cls.KEY_SUMMARY, type(manifest.summary)))
+        if manifest.summary is "":
+            raise ValueError("The {} is empty.".format(cls.KEY_SUMMARY))
 
     @property
     def name(self):
