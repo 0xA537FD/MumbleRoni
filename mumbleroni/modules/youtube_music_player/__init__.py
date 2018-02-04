@@ -8,14 +8,15 @@ import threading as th
 import subprocess as sp
 
 from mumbleroni.core.module.abstract_module import AbstractModule
+from pymumble.pymumble_py3 import Mumble
 from bs4 import BeautifulSoup
 
 _logger = logging.getLogger(__name__)
 
 
 class YoutubeMusicPlayerModule(AbstractModule):
-    def __init__(self, mumble):
-        AbstractModule.__init__(self, mumble)
+    def __init__(self, mumble: Mumble):
+        self._mumble = mumble
         self._ffmpeg_thread = None
         self._music_thread = None
         self._stop_music = False
@@ -34,7 +35,7 @@ class YoutubeMusicPlayerModule(AbstractModule):
         try:
             soup = BeautifulSoup(message, "html.parser")
             music_url = soup.find("a").get("href")
-        except Exception:
+        except:
             _logger.error("An error occurred while trying to parse the link out of the message.", exc_info=True)
             self._send_message_to_channel("An invalid link was passed with the command.")
             return
@@ -42,8 +43,8 @@ class YoutubeMusicPlayerModule(AbstractModule):
         try:
             self._video = pafy.new(music_url)
             audio_url = self._video.getbestaudio().url
-            self.info(message)
-        except Exception:
+            self.info()
+        except:
             self._send_message_to_channel("An error occurred while trying to get the audio.")
             _logger.error("An error occurred while trying to get the audio of the video url {}".format(music_url),
                           exc_info=True)
@@ -63,7 +64,7 @@ class YoutubeMusicPlayerModule(AbstractModule):
             else:
                 time.sleep(0.01)
 
-    def stop(self, message):
+    def stop(self):
         self._stop_music = True
         self._mumble.sound_output.clear_buffer()
 
@@ -71,5 +72,11 @@ class YoutubeMusicPlayerModule(AbstractModule):
             self._ffmpeg_thread.kill()
             self._ffmpeg_thread = None
 
-    def info(self, message):
-        self._send_message_to_channel("Now playing >> {title}".format(title=self._video.title))
+    def info(self):
+        if self._video:
+            self._send_message_to_channel("Now playing >> {title}".format(title=self._video.title))
+        else:
+            self._send_message_to_channel("Currently no audio is playing.")
+
+    def _send_message_to_channel(self, message):
+        self._mumble.channels[self._mumble.users.myself["channel_id"]].send_text_message(message)

@@ -18,8 +18,8 @@ class MumbleRoni(th.Thread):
         th.Thread.__init__(self)
         self._settings = SettingsParser.parse()
         self._main_thread = None
-        _logger.debug(
-            "Credentials which will be used to connect to the server: {}".format(self._settings.server.to_dict()))
+        _logger.debug("Credentials which will be used to connect to "
+                      "the server: {}".format(self._settings.server.to_dict()))
         self._mumble = mmbl.Mumble(host=self._settings.server.host,
                                    user=self._settings.server.username,
                                    port=self._settings.server.port,
@@ -31,6 +31,7 @@ class MumbleRoni(th.Thread):
                                    debug=False)
         self._command_manager = CommandManager()
         self._module_loader = ModuleLoader(self._mumble, self._command_manager)
+        self._module_loader.load_all_modules()
         self._init_callbacks()
         self._mumble.set_codec_profile("audio")
 

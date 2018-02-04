@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import inspect
 import logging
 
 from mumbleroni.settings.settingsparser import SettingsParser
@@ -29,7 +30,12 @@ class CommandManager:
                                                           command=command)
             if message.startswith(command_with_prefix):
                 _logger.info("Found function for command {}".format(command_with_prefix))
-                self._command_registry.commands[command].__call__(message)
+
+                func_args = inspect.getfullargspec(self._command_registry.commands[command])
+                if len(func_args.args) > 1:
+                    self._command_registry.commands[command].__call__(message)
+                else:
+                    self._command_registry.commands[command].__call__()
 
     @property
     def command_registry(self):

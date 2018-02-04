@@ -15,6 +15,9 @@ class Manifest(IDictParseable):
 
     @classmethod
     def from_dict(cls, d):
+        if not d:
+            raise ValueError("The dict was None or empty.")
+
         result = Manifest()
         result.name = d.get(cls.KEY_NAME)
         result.version = d.get(cls.KEY_VERSION)
@@ -65,6 +68,11 @@ class Manifest(IDictParseable):
                              "got {}".format(cls.KEY_SUMMARY, type(manifest.summary)))
         if manifest.summary is "":
             raise ValueError("The {} is empty.".format(cls.KEY_SUMMARY))
+
+    def is_empty(self):
+        return self._name is None\
+            and self._version is None\
+            and self._summary is None
 
     @property
     def name(self):
