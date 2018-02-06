@@ -3,6 +3,7 @@
 from mumbleroni.datastructure import IDictParseable
 
 
+# TODO: Allow to define dependencies on other modules
 class Manifest(IDictParseable):
     KEY_NAME = "name"
     KEY_VERSION = "version"
@@ -12,6 +13,11 @@ class Manifest(IDictParseable):
         self._name = None
         self._version = None
         self._summary = None
+
+    def __repr__(self):
+        return f"{{'{self.KEY_NAME}': '{self._name}', " \
+               f"'{self.KEY_VERSION}': '{self._version}', " \
+               f"'{self.KEY_SUMMARY}': '{self._summary}'}}"
 
     @classmethod
     def from_dict(cls, d):

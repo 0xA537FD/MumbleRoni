@@ -16,6 +16,7 @@ _logger = logging.getLogger(__name__)
 
 class YoutubeMusicPlayerModule(AbstractModule):
     def __init__(self, mumble: Mumble):
+        super(YoutubeMusicPlayerModule, self).__init__()
         self._mumble = mumble
         self._ffmpeg_thread = None
         self._music_thread = None
@@ -67,10 +68,15 @@ class YoutubeMusicPlayerModule(AbstractModule):
     def stop(self):
         self._stop_music = True
         self._mumble.sound_output.clear_buffer()
+        self._video = None
 
         if self._ffmpeg_thread:
             self._ffmpeg_thread.kill()
             self._ffmpeg_thread = None
+
+        if self._music_thread:
+            self._music_thread.kill()
+            self._music_thread = None
 
     def info(self):
         if self._video:

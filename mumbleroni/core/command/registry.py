@@ -2,7 +2,7 @@
 
 import logging
 from mumbleroni.core.command.error import RegistrationError
-from mumbleroni.settings.settingsparser import SettingsParser
+from mumbleroni.settings.parser import SettingsParser
 
 _logger = logging.getLogger(__name__)
 

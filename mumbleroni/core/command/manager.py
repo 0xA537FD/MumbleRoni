@@ -3,7 +3,7 @@
 import inspect
 import logging
 
-from mumbleroni.settings.settingsparser import SettingsParser
+from mumbleroni.settings.parser import SettingsParser
 from mumbleroni.core.command.registry import CommandRegistry
 from mumbleroni.core.command.constants import COMMAND_SCAFFOLD
 
@@ -33,9 +33,17 @@ class CommandManager:
 
                 func_args = inspect.getfullargspec(self._command_registry.commands[command])
                 if len(func_args.args) > 1:
-                    self._command_registry.commands[command].__call__(message)
+                    try:
+                        self._command_registry.commands[command].__call__(message)
+                    except:
+                        _logger.error("Error occurred while trying to execute the function for the command: {}"\
+                                        .format(command_with_prefix))
                 else:
-                    self._command_registry.commands[command].__call__()
+                    try:
+                        self._command_registry.commands[command].__call__()
+                    except:
+                        _logger.error("Error occurred while trying to execute the function for the command: {}" \
+                                      .format(command_with_prefix))
 
     @property
     def command_registry(self):

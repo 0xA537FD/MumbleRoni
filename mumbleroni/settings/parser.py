@@ -5,7 +5,7 @@ import sys
 import yaml
 import logging
 
-from mumbleroni.settings.datastructure import Settings, Server
+from mumbleroni.settings.datastructure import Settings
 from mumbleroni.settings.constants import CONFIG_DIR_NAME, CONFIG_FILE_NAME
 
 _logger = logging.getLogger(__name__)

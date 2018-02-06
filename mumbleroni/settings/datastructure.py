@@ -15,6 +15,9 @@ class Settings(IDictParseable):
 
     @classmethod
     def from_dict(cls, d):
+        if not d:
+            raise ValueError("The dict was None or empty.")
+
         result = Settings()
         result.server = Server.from_dict(d)
         result.command_prefix = d.get(cls.KEY_COMMAND_PREFIX, cls.DEFAULT_COMMAND_PREFIX)
@@ -26,6 +29,10 @@ class Settings(IDictParseable):
             self._server.KEY_SERVER: self._server.to_dict(),
             self.KEY_COMMAND_PREFIX: self._command_prefix,
         }
+
+    def is_empty(self):
+        return self._server.is_empty()\
+            and self._command_prefix == self.DEFAULT_COMMAND_PREFIX
 
     @property
     def server(self):
@@ -73,7 +80,11 @@ class Server(IDictParseable):
     def from_dict(cls, d):
         """
         Parses a dictionary into a Server object and validates it.
+        :exception ValueError:
         """
+        if not d:
+            raise ValueError("The dict was None or empty.")
+
         result = Server()
         result.host = d[cls.KEY_SERVER].get(cls.KEY_HOST)
         result.port = d[cls.KEY_SERVER].get(cls.KEY_PORT, cls.DEFAULT_MUMBLE_PORT)
@@ -100,6 +111,17 @@ class Server(IDictParseable):
             self.KEY_TOKENS: self.KEY_TOKENS,
             self.KEY_DEFAULT_CHANNEL: self._default_channel,
         }
+
+    def is_empty(self):
+        return self._host is None\
+            and self._port == self.DEFAULT_MUMBLE_PORT\
+            and self._username is None\
+            and self._password is None\
+            and self._certificate_path is None\
+            and self._keyfile is None\
+            and self._reconnect\
+            and self._tokens is []\
+            and self._default_channel is None
 
     @classmethod
     def validate(cls, server):

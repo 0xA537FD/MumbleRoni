@@ -6,7 +6,7 @@ import threading as th
 import pymumble.pymumble_py3 as mmbl
 import pymumble.pymumble_py3.callbacks as mmbl_callbacks
 
-from mumbleroni.settings.settingsparser import SettingsParser
+from mumbleroni.settings.parser import SettingsParser
 from mumbleroni.core.command.manager import CommandManager
 from mumbleroni.core.module.loader import ModuleLoader
 
@@ -32,6 +32,7 @@ class MumbleRoni(th.Thread):
         self._command_manager = CommandManager()
         self._module_loader = ModuleLoader(self._mumble, self._command_manager)
         self._module_loader.load_all_modules()
+        _logger.info(self._module_loader.loaded_modules)
         self._init_callbacks()
         self._mumble.set_codec_profile("audio")
 
