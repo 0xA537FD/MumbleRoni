@@ -147,7 +147,7 @@ class Server(IDictParseable):
 
     @classmethod
     def _validate_port(cls, server):
-        if server.port is None:
+        if not server.port:
             raise ValueError("Missing {}.".format(cls.KEY_PORT))
         if type(server.port) != int:
             raise ValueError("The {} has an invalid type... Expected type int "
@@ -165,7 +165,7 @@ class Server(IDictParseable):
 
     @classmethod
     def _validate_password(cls, server):
-        if server.password is None:
+        if not server.password:
             return
         if type(server.password) != str:
             raise ValueError("The {} has an invalid type... Expected type str "
@@ -173,13 +173,11 @@ class Server(IDictParseable):
 
     @classmethod
     def _validate_certificate_path(cls, server):
-        if server.certificate_path is None:
+        if not server.certificate_path:
             return
         if type(server.certificate_path) != str:
             raise ValueError("The {} has an invalid type... Expected type str "
                              "got {}".format(cls.KEY_CERTIFICATE_PATH, type(server.certificate_path)))
-        if server.certificate_path == "":
-            raise ValueError("The {} is empty.".format(cls.KEY_CERTIFICATE_PATH))
         if not os.path.exists(server.certificate_path):
             raise ValueError("The path from {} does not exist.".format(cls.KEY_CERTIFICATE_PATH))
 
