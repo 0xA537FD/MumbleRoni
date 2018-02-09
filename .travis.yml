@@ -4,11 +4,14 @@ python:
   - "3.4"
   - "3.5"
   - "3.6"
-before_install:
-  - sudo apt-get install libav-tools
-  - sudo apt-get install opus-tools
+addons:
+  apt:
+    packages:
+      - libav-tools
+      - opus-tools
 install:
   - pip install -r requirements.txt
+  - pip install -r pymumble/requirements.txt
   - pip install unittest2
 script:
   - python -m unittest
