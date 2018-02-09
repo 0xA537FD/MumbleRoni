@@ -15,9 +15,16 @@ class Manifest(IDictParseable):
         self._summary = None
 
     def __repr__(self):
-        return f"{{'{self.KEY_NAME}': '{self._name}', " \
-               f"'{self.KEY_VERSION}': '{self._version}', " \
-               f"'{self.KEY_SUMMARY}': '{self._summary}'}}"
+        return "{{ " \
+               "{key_name}: {name}, " \
+               "{key_version}: {version}, " \
+               "{key_summary}: {summary}" \
+               " }}".format(key_name=self.KEY_NAME,
+                           name=self._name,
+                           key_version=self.KEY_VERSION,
+                           version=self._version,
+                           key_summary=self.KEY_SUMMARY,
+                           summary=self._summary)
 
     @classmethod
     def from_dict(cls, d):

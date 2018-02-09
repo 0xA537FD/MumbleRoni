@@ -2,7 +2,7 @@
 
 import os
 import unittest
-from mumbleroni.settings.datastructure import Settings
+from ..settings.datastructure import Settings
 
 
 class SettingsDataStructureTests(unittest.TestCase):
